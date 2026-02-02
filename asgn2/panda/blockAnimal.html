@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>WebGL Panda (Cube Rig)</title>
+  <style>
+    body { font-family: system-ui, Arial; margin: 16px; }
+    canvas { border: 1px solid #ccc; }
+    .row { margin: 10px 0; }
+    label { display:inline-block; width: 140px; }
+  </style>
+</head>
+<body>
+  <h2>3D Panda (WebGL)</h2>
+
+  <canvas id="webgl" width="500" height="500"></canvas>
+
+  <div class="row">
+    <label>Rotate Y</label>
+    <input id="rotY" type="range" min="-180" max="180" value="30" />
+    <span id="rotYv"></span>
+  </div>
+
+  <div class="row">
+    <label>Rotate X</label>
+    <input id="rotX" type="range" min="-90" max="90" value="15" />
+    <span id="rotXv"></span>
+  </div>
+
+  <div class="row">
+    <label>Left Arm</label>
+    <input id="lArm" type="range" min="-120" max="120" value="25" />
+    <span id="lArmv"></span>
+  </div>
+
+  <div class="row">
+    <label>Right Arm</label>
+    <input id="rArm" type="range" min="-120" max="120" value="-25" />
+    <span id="rArmv"></span>
+  </div>
+
+  <div class="row">
+    <label>Animate</label>
+    <input id="anim" type="checkbox" checked />
+  </div>
+
+  <p><small>Tip: drag mouse on canvas to rotate too.</small></p>
+
+  <script src="panda.js"></script>
+</body>
+</html>
