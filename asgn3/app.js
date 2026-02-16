@@ -400,6 +400,7 @@
   });
 
   const MOVE_SPEED = 6.0;
+  const ROT_SPEED = 2.5; // radians per second
   const PLAYER_RADIUS = 0.3;
   const PLAYER_HEIGHT = 1.8;
 
@@ -436,6 +437,15 @@
   }
 
   function movePlayer(dt) {
+
+    if (keys.has("KeyQ")) {
+      cam.look( ROT_SPEED * dt, 0 );   // rotate left
+    }
+
+    if (keys.has("KeyE")) {
+      cam.look(-ROT_SPEED * dt, 0 );   // rotate right
+    }
+    
     const fwd = (keys.has("KeyW") ? 1 : 0) + (keys.has("KeyS") ? -1 : 0);
     const str = (keys.has("KeyD") ? 1 : 0) + (keys.has("KeyA") ? -1 : 0);
     const dist = MOVE_SPEED * dt;
