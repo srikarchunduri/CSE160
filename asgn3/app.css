@@ -1,0 +1,31 @@
+#crosshair {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  margin-top: -8px;
+  pointer-events: none;
+}
+
+#crosshair::before,
+#crosshair::after {
+  content: "";
+  position: absolute;
+  background: white;
+}
+
+#crosshair::before {
+  left: 7px;
+  top: 0;
+  width: 2px;
+  height: 16px;
+}
+
+#crosshair::after {
+  top: 7px;
+  left: 0;
+  width: 16px;
+  height: 2px;
+}
