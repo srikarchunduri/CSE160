@@ -1,0 +1,200 @@
+<!-- index.html -->
+
+
+<!-- Assignment 3-->
+<!--Name: Srikar Chunduri-->
+<!--Email: schundur@ucsc.edu-->
+
+<!--Notes to Grader: not much-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WebGL Voxel FPS</title>
+  <style>
+    html, body { margin:0; height:100%; overflow:hidden; background:#0b1020; }
+    #wrap { position:relative; width:100%; height:100%; }
+    canvas { display:block; width:100%; height:100%; cursor:crosshair; }
+
+    #hud {
+      position:absolute; left:12px; top:12px; color:#d7e3ff;
+      font: 14px/1.35 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: rgba(0,0,0,.35); padding:10px 12px; border-radius:10px;
+      backdrop-filter: blur(6px);
+      max-width: 420px;
+    }
+    #hud b { color:#fff; }
+    #hint { opacity:.9; margin-top:6px; }
+
+    #lightingPanel {
+      z-index: 30;
+      top: 100px;
+      position: absolute;
+      left: 12px;
+    }
+
+    #blockBox {
+      top: 160px;
+      z-index: 20;
+    }
+
+    #hud {
+      z-index: 20;
+    }
+
+    /* ===== NEW: block selector box (separate from HUD) ===== */
+    #blockBox {
+      position: absolute;
+      left: 12px;
+      top: 110px;               /* sits below HUD; tweak if needed */
+      background: rgba(0,0,0,0.55);
+      border: 1.5px solid rgba(215,227,255,0.55);
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: #d7e3ff;
+      font: 14px/1.35 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      backdrop-filter: blur(6px);
+      min-width: 220px;
+      user-select: none;
+      pointer-events: none;     /* doesn't block mouse */
+    }
+    #blockBox .title {
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+      letter-spacing: 0.2px;
+    }
+    #blockBox .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 4px 0;
+      opacity: 0.85;
+    }
+    #blockBox .key {
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(215,227,255,0.5);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      flex: 0 0 auto;
+    }
+    /* highlight currently equipped row */
+    #blockBox .row.active {
+      opacity: 1;
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 6px 8px;
+      margin-left: -8px;
+      margin-right: -8px;
+    }
+    #blockBox .row.active .name {
+      font-weight: 700;
+      color: #fff;
+    }
+    #blockBox .equip {
+      margin-top: 8px;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    #crosshair {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      margin-left: -8px;
+      margin-top: -8px;
+      pointer-events: none;
+    }
+    #crosshair::before,
+    #crosshair::after {
+      content: "";
+      position: absolute;
+      background: white;
+    }
+    #crosshair::before {
+      left: 7px; top: 0;
+      width: 2px; height: 16px;
+    }
+    #crosshair::after {
+      top: 7px; left: 0;
+      width: 16px; height: 2px;
+    }
+
+    #gameMessage {
+      position: fixed;
+      top: 18%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.75);
+      color: white;
+      padding: 18px 28px;
+      font-size: 20px;
+      border-radius: 8px;
+      display: none;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+<div id="wrap">
+  <div id="gameMessage"></div>
+  <canvas id="gl"></canvas>
+  <div id="crosshair"></div>
+
+  <div id="hud">
+    <div><b>WebGL Voxel FPS</b></div>
+    <div id="hint">Click canvas to lock pointer. WASD move, Esc to use mouse again.</div>
+    <div id="stats"></div>
+  </div>
+  <div id="lightingPanel" style="
+    position:absolute; left:12px; top:210px;
+    background: rgba(0,0,0,.45);
+    color:#d7e3ff;
+    padding:10px 12px;
+    border-radius:10px;
+    font:14px/1.35 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    backdrop-filter: blur(6px);
+  ">
+    <label style="display:flex; gap:8px; align-items:center; cursor:pointer;">
+      <input id="toggleNormals" type="checkbox">
+      Show normals
+    </label>
+
+    <hr style="opacity:.2; margin:10px 0;">
+    <label style="display:flex; gap:8px; align-items:center; cursor:pointer; margin-bottom:8px;">
+      <input id="toggleLighting" type="checkbox" checked>
+      Lighting on
+    </label>
+
+    <div style="font-size:12px; opacity:.85; margin-bottom:6px;">Light position</div>
+    <label style="display:block; font-size:12px;">X <input id="lightX" type="range" min="0" max="32" step="0.1" value="16" style="width:180px;"></label>
+    <label style="display:block; font-size:12px;">Y <input id="lightY" type="range" min="0" max="20" step="0.1" value="8" style="width:180px;"></label>
+    <label style="display:block; font-size:12px;">Z <input id="lightZ" type="range" min="0" max="32" step="0.1" value="16" style="width:180px;"></label>
+
+    <div style="font-size:12px; opacity:.85; margin:10px 0 6px;">Light color</div>
+    <label style="display:block; font-size:12px;">R <input id="lightR" type="range" min="0" max="1" step="0.01" value="1" style="width:180px;"></label>
+    <label style="display:block; font-size:12px;">G <input id="lightG" type="range" min="0" max="1" step="0.01" value="1" style="width:180px;"></label>
+    <label style="display:block; font-size:12px;">B <input id="lightB" type="range" min="0" max="1" step="0.01" value="1" style="width:180px;"></label>
+
+    <label style="display:flex; gap:8px; align-items:center; cursor:pointer; margin-top:10px;">
+      <input id="lightOrbit" type="checkbox" checked>
+      Orbit light
+    </label>
+  </div>
+
+
+<script src="./camera.js"></script>
+<script src="./app.js" defer></script>
+</body>
+</html>
