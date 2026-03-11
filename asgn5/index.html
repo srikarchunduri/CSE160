@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tiny Alley World - Three.js Final</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, sans-serif;
+    }
+
+    #info {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 10;
+      color: white;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 10px 14px;
+      border-radius: 10px;
+      line-height: 1.4;
+      max-width: 320px;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="info">
+    <b>Tiny Alley World</b><br>
+    Mouse: orbit / zoom / pan<br>
+    Inspired by oversized Ratatouille-style traversal<br>
+    Extra feature: floating collectible route + stylized giant alley scene<br>
+    Use Q to enter first person mode and press Q again to exit
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
