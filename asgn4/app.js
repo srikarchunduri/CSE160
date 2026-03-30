@@ -725,7 +725,7 @@
     }
     
     const fwd = (keys.has("KeyW") ? 1 : 0) + (keys.has("KeyS") ? -1 : 0);
-    const str = (keys.has("KeyD") ? 1 : 0) + (keys.has("KeyA") ? -1 : 0);
+    const str = (keys.has("KeyD") ? -1 : 0) + (keys.has("KeyA") ? 1 : 0);
     const dist = MOVE_SPEED * dt;
 
     let newX = cam.pos[0];
